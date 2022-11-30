@@ -1,11 +1,10 @@
 package com.github.dillonredding.plugins
 
-import com.github.dillonredding.did.did
-import com.github.dillonredding.did.doc.didDoc
-import com.github.dillonredding.vc.Invitation
+import com.github.dillonredding.did.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.*
@@ -26,7 +25,11 @@ fun Application.configureRouting() {
 
     routing {
         get("/invitation") {
-            call.respond(Invitation(from = did.toString()))
+            call.respond(DIDCommMessage(
+                from = did,
+                type = DIDCommMessage.Types.INVITATION,
+                body = DIDCommMessageBodies.INVITATION
+            ))
         }
 
         get("/.well-known/did.json") {
@@ -35,7 +38,9 @@ fun Application.configureRouting() {
         }
 
         post("/credential-issuance") {
-            call.respondText("Work in progress", status = HttpStatusCode.Accepted)
+            val message = call.receive<DIDCommMessage>()
+            val response = handleMessage(message)
+            call.respond(HttpStatusCode.Accepted, response)
         }
     }
 }

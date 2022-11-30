@@ -1,10 +1,15 @@
-package com.github.dillonredding.did.doc
+package com.github.dillonredding.did
 
 import foundation.identity.did.DIDDocument
 import foundation.identity.did.Service
 import foundation.identity.did.VerificationMethod
 import io.ipfs.multibase.Multibase
 import java.net.URI
+
+fun did(baseUri: String): URI = URI.create(baseUri).let {
+    val id = if (it.port == -1) it.host else "${it.host}%3A${it.port}"
+    URI.create("did:web:$id")
+}
 
 fun didDoc(did: URI, publicKey: ByteArray, didCommMessagingUri: URI): DIDDocument {
     val verificationMethod = VerificationMethod.builder()
