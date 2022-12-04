@@ -15,7 +15,7 @@ import java.net.URI
 data class DIDCommMessage(
     @Serializable(with = URISerializer::class)
     val type: URI,
-    val id: String = randomUUIDString(),
+    val id: String,
     val body: DIDCommMessageBody = DIDCommMessageBodies.EMPTY,
     val from: URI? = null,
     val to: List<URI> = emptyList(),
